@@ -2,7 +2,7 @@
 import sqlite3
 from telegram import Update, ForceReply, ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, MessageHandler, Filters, ConversationHandler, CommandHandler,  CallbackQueryHandler, CallbackContext
-
+from config import API_TOKEN
 
 # Define states of the conversation
 OPTION, FACULTY, GROUP, SUMMARY = range(1, 5)
@@ -253,24 +253,24 @@ def get_stats(update: Update, context: CallbackContext, option: str) -> None:
 
     message = ""
     if option == "fc1":
-        message += option + "+\n"
+        message += facilities[0] + "+\n"
         for i in a[0]:
-            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}"
+            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}\n"
     elif option == 'fc2':
-        message += option + "+\n"
+        message += facilities[1] + "+\n"
         for i in a[1]:
-            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}"
+            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}\n"
 
     elif option == 'fc3':
-        message += option + "+\n"
+        message += facilities[2] + "+\n"
         for i in a[2]:
-            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}"
+            message += f"{i.id}. {i.full_name} - {i.faculty} - {i.group_name}\n"
     context.bot.send_message(
         chat_id=update.callback_query.message.chat_id, text=message)
 
 
 def main() -> None:
-    updater = Updater()
+    updater = Updater(token=API_TOKEN)
     dispatcher = updater.dispatcher
 
     conv_handler = ConversationHandler(
@@ -291,8 +291,8 @@ def main() -> None:
     dispatcher.add_handler(conv_handler)
     dispatcher.add_handler(CallbackQueryHandler(get_stats))
     dispatcher.add_handler(CommandHandler('start', start_bot))
-    dispatcher.add_handler(CommandHandler("stats"), stats)
-    dispatcher.add_handler(CommandHandler("add"), start)
+    dispatcher.add_handler(CommandHandler("stats", stats))
+    dispatcher.add_handler(CommandHandler("add", start))
     dispatcher.add_handler(get_stats_handler)
     dispatcher.add_handler(enter_student_handler)
     updater.start_polling()
